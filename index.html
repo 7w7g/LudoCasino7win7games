@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Demo Casino</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, #222, #000);
+  color:#fff;
+  text-align:center;
+}
+header {
+  padding:20px;
+  background:#111;
+  font-size:26px;
+  font-weight:bold;
+}
+.balance {
+  margin:20px;
+  font-size:20px;
+}
+.games button {
+  width:90%;
+  max-width:300px;
+  padding:15px;
+  margin:10px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#ff9800,#ff5722);
+  color:#000;
+  font-weight:bold;
+}
+#result {
+  margin:20px;
+  min-height:24px;
+}
+.admin {
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎰 DEMO CASINO</header>
+
+<div class="balance">
+Баланс: <span id="balance">1000</span> 💰
+</div>
+
+<div class="games">
+<button onclick="slot()">🎰 SLOT</button>
+<button onclick="dice()">🎲 DICE</button>
+<button onclick="roulette()">🎯 ROULETTE</button>
+<button onclick="withdraw()">💸 ВЫВОД (DEMO)</button>
+</div>
+
+<div id="result"></div>
+<div class="admin" onclick="admin()">admin</div>
+
+<script>
+let balance = localStorage.getItem("balance");
+balance = balance ? parseInt(balance) : 1000;
+
+function save() {
+  localStorage.setItem("balance", balance);
+}
+
+function update() {
+  document.getElementById("balance").innerText = balance;
+  save();
+}
+
+function msg(t){ document.getElementById("result").innerText=t; }
+
+function slot(){
+  if(balance<50) return msg("❌ Недостаточно средств");
+  balance-=50;
+  let win=Math.random()<0.3;
+  if(win){ balance+=200; msg("🎉 SLOT WIN +200"); }
+  else msg("😢 SLOT LOSE -50");
+  update();
+}
+
+function dice(){
+  if(balance<20) return msg("❌ Недостаточно средств");
+  balance-=20;
+  let r=Math.floor(Math.random()*6)+1;
+  if(r>=5){ balance+=60; msg("🎲 "+r+" WIN"); }
+  else msg("🎲 "+r+" LOSE");
+  update();
+}
+
+function roulette(){
+  if(balance<100) return msg("❌ Недостаточно средств");
+  balance-=100;
+  let win=Math.random()<0.48;
+  if(win){ balance+=200; msg("🎯 ROULETTE WIN"); }
+  else msg("🎯 ROULETTE LOSE");
+  update();
+}
+
+function withdraw(){
+  if(balance<500) return msg("❌ Минимум 500");
+  balance-=500;
+  msg("💸 Заявка на вывод принята (DEMO)");
+  update();
+}
+
+function admin(){
+  let p=prompt("Пароль");
+  if(p==="admin"){
+    let add=parseInt(prompt("Добавить coins"));
+    if(!isNaN(add)){ balance+=add; update(); }
+  }
+}
+
+update();
+</script>
+
+</body>
+</html>
