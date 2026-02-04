@@ -6,6 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 
+<p>Level: <span id="level">1</span></p>
+
+<button onclick="dailyBonus()">🎁 DAILY BONUS</button>
+
+<button onclick="saveScore()">📊 LEADERBOARD</button>
 
 <style>
 body {
@@ -70,9 +75,72 @@ header {
 let balance = localStorage.getItem("balance");
 balance = balance ? parseInt(balance) : 1000;
 
+function changeTheme(){
+  const themes = [
+    {bg:"#111",btn:"linear-gradient(135deg,#ff9800,#ff5722)"},
+    {bg:"#001f3f",btn:"linear-gradient(135deg,#0074D9,#7FDBFF)"},
+    {bg:"#0A0","#0F0,#8F8)"} // можно добавить ещё
+  ];
+  const t = themes[Math.floor(Math.random()*themes.length)];
+  document.body.style.background=t.bg;
+  document.querySelectorAll("button").forEach(b=>b.style.background=t.btn);
+}
+
+<button onclick="changeTheme()">🎨 CHANGE THEME</button>
+
+function saveScore(){
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard") || "[]");
+  leaderboard.push({name: prompt("Имя для таблицы"), balance: balance});
+  leaderboard.sort((a,b)=>b.balance-a.balance);
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard.slice(0,10)));
+  showLeaderboard();
+}
+
+function showLeaderboard(){
+  const lb = JSON.parse(localStorage.getItem("leaderboard") || "[]");
+  let html = "<h3>🏆 Leaderboard</h3><ol>";
+  lb.forEach(p=>html+=`<li>${p.name}: ${p.balance} 💰</li>`);
+  html += "</ol>";
+  document.getElementById("result").innerHTML = html;
+}
+
+function dailyBonus(){
+  const last = localStorage.getItem("lastBonus");
+  const now = new Date().toDateString();
+  if(last === now){
+    msg("⏳ Бонус уже получен сегодня");
+  } else {
+    const bonus = 200;
+    balance += bonus;
+    localStorage.setItem("lastBonus", now);
+    msg("🎁 Ежедневный бонус +" + bonus);
+    update();
+  }
+}
+  
 function save() {
   localStorage.setItem("balance", balance);
 }
+let level = parseInt(localStorage.getItem("level")) || 1;
+let exp = parseInt(localStorage.getItem("exp")) || 0;
+  
+function gainExp(amount){
+  exp += amount;
+  if(exp >= level*100){
+    exp = 0;
+    level++;
+    msg("💎 Новый уровень! Level "+level);
+  }
+  localStorage.setItem("level", level);
+  localStorage.setItem("exp", exp);
+}
+
+function update(){
+  document.getElementById("balance").innerText = balance;
+  document.getElementById("level").innerText = level;
+  save();
+}
+
 
 function update() {
   document.getElementById("balance").innerText = balance;
@@ -81,14 +149,37 @@ function update() {
 
 function msg(t){ document.getElementById("result").innerText=t; }
 
-function slot(){
-  if(balance<50) return msg("❌ Недостаточно средств");
-  balance-=50;
-  let win=Math.random()<0.3;
-  if(win){ balance+=200; msg("🎉 SLOT WIN +200"); }
-  else msg("😢 SLOT LOSE -50");
+function slot() {
+  if(balance < 50) return msg("❌ Недостаточно средств");
+  balance -= 50;
   update();
+
+  const symbols = ["🍒","🍋","🔔","⭐","7️⃣"];
+  let reel = ["","",""];
+  let count = 0;
+
+  const interval = setInterval(() => {
+    reel = [symbols[Math.floor(Math.random()*symbols.length)],
+            symbols[Math.floor(Math.random()*symbols.length)],
+            symbols[Math.floor(Math.random()*symbols.length)]];
+    msg("🎰 " + reel.join(" | "));
+    count++;
+    if(count>=10){
+      clearInterval(interval);
+      if(reel[0]===reel[1] && reel[1]===reel[2]){
+        balance += 200;
+        msg("🎉 BIG WIN! +" + 200);
+      } else if(reel[0]===reel[1] || reel[1]===reel[2]){
+        balance += 100;
+        msg("🎊 SMALL WIN! +100");
+      } else {
+        msg("😢 Проигрыш -50");
+      }
+      update();
+    }
+  }, 200);
 }
+
 
 function dice(){
   if(balance<20) return msg("❌ Недостаточно средств");
