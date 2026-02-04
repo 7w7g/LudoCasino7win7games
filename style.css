@@ -1,4 +1,4 @@
-/* ===== Основной фон ===== */
+/* ===== Общий фон ===== */
 body {
   margin:0;
   font-family:'Segoe UI',sans-serif;
@@ -68,11 +68,17 @@ header .bonuses button:hover { transform: scale(1.1); }
   justify-content:flex-start;
   overflow-y:auto;
 }
-#balanceLevel { display:flex; justify-content:space-between; width:100%; margin-bottom:10px; font-size:18px; }
+#balanceLevel {
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+  margin-bottom:10px;
+  font-size:18px;
+}
 #gameArea {
   width:100%;
   max-width:600px;
-  min-height:350px;
+  min-height:400px;
   background:rgba(0,0,0,0.5);
   border-radius:12px;
   padding:20px;
@@ -81,7 +87,15 @@ header .bonuses button:hover { transform: scale(1.1); }
   align-items:center;
   justify-content:center;
 }
-#result { margin-top:10px; min-height:50px; font-size:18px; text-align:center; }
+#result {
+  margin-top:10px;
+  min-height:60px;
+  font-size:18px;
+  text-align:center;
+  padding:10px;
+  background:rgba(255,255,255,0.1);
+  border-radius:8px;
+}
 
 /* ===== Slots Animation ===== */
 @keyframes slotSpin {
@@ -127,10 +141,32 @@ header .bonuses button:hover { transform: scale(1.1); }
 }
 .card { display:inline-block; font-size:48px; animation: cardMove 0.5s ease-in-out; }
 
-/* ===== Admin button ===== */
-#adminBtn {
-  position:fixed; bottom:10px; right:10px; padding:10px 12px;
-  background:red; color:#fff; border:none; border-radius:6px; cursor:pointer;
-  transition: all 0.3s;
+/* ===== Roulette Animation ===== */
+.rouletteWheel {
+  width:250px;
+  height:250px;
+  border-radius:50%;
+  border:5px solid #fff;
+  position:relative;
+  margin:20px;
+  background: conic-gradient(
+    red 0 10deg, black 10deg 20deg, red 20deg 30deg, black 30deg 40deg,
+    red 40deg 50deg, black 50deg 60deg, red 60deg 70deg, black 70deg 80deg,
+    red 80deg 90deg, black 90deg 100deg, red 100deg 110deg, black 110deg 120deg,
+    red 120deg 130deg, black 130deg 140deg, red 140deg 150deg, black 150deg 160deg,
+    red 160deg 170deg, black 170deg 180deg, red 180deg 190deg, black 190deg 200deg,
+    red 200deg 210deg, black 210deg 220deg, red 220deg 230deg, black 230deg 240deg,
+    red 240deg 250deg, black 250deg 260deg, red 260deg 270deg, black 270deg 280deg,
+    red 280deg 290deg, black 290deg 300deg, red 300deg 310deg, black 310deg 320deg,
+    red 320deg 330deg, black 330deg 340deg, red 340deg 350deg, black 350deg 360deg
+  );
+  transition: transform 5s cubic-bezier(0.33,1,0.68,1);
 }
-#adminBtn:hover { transform: scale(1.1); box-shadow:0 0 10px #fff;}
+.wheelPointer {
+  width:0; height:0;
+  border-left:15px solid transparent;
+  border-right:15px solid transparent;
+  border-bottom:30px solid yellow;
+  position:absolute;
+  top:-30px; left:calc(50% - 15px);
+}
