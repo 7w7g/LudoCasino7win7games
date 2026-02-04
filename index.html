@@ -2,18 +2,17 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Demo Casino Animated</title>
+<title>Demo Casino Full</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="styles.css">
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
 <header>
-  <div class="logo">🎰 Demo Casino Animated</div>
+  <div class="logo">🎰 Demo Casino</div>
   <div class="bonuses">
     <button onclick="dailyBonus()">🎁 Daily Bonus</button>
     <button onclick="specialBonus()">✨ Special Bonus</button>
@@ -24,7 +23,7 @@
   <div class="sidebar">
     <h3>Игры</h3>
     <button onclick="slot()">🎰 Slots</button>
-    <button onclick="roulette()">🎯 Roulette</button>
+    <button onclick="rouletteGame()">🎯 Roulette</button>
     <button onclick="dice()">🎲 Dice</button>
     <button onclick="coinFlip()">🪙 Coin Flip</button>
     <button onclick="drawCard()">🂡 Card Draw</button>
@@ -43,7 +42,6 @@
 <button id="adminBtn" onclick="adminPanel()">Admin</button>
 
 <script>
-// ===== Local Storage =====
 let balance = parseInt(localStorage.getItem("balance")) || 1000;
 let level = parseInt(localStorage.getItem("level")) || 1;
 let exp = parseInt(localStorage.getItem("exp")) || 0;
@@ -51,13 +49,12 @@ function updateUI(){ document.getElementById("balance").innerText = balance; doc
 function showMsg(msg){ document.getElementById("result").innerHTML = msg;}
 function gainExp(amount){ exp += amount; if(exp >= level*100){ exp=0; level++; showMsg("💎 Новый уровень!");} updateUI();}
 
-// ===== Games =====
+// ===== Slot Game =====
 function slot(){
   if(balance<50){ showMsg("❌ Недостаточно средств"); return;}
   balance-=50; updateUI();
   const symbols=["🍒","🍋","🔔","⭐","7️⃣"];
-  let reel=["","",""];
-  let count=0;
+  let reel=["","",""], count=0;
   const interval=setInterval(()=>{
     reel=[symbols[Math.floor(Math.random()*symbols.length)],
           symbols[Math.floor(Math.random()*symbols.length)],
@@ -74,7 +71,25 @@ function slot(){
   },200);
 }
 
-function roulette(){ showMsg("🎯 Roulette крутится..."); balance-=100; gainExp(30); updateUI(); }
+// ===== Roulette Game =====
+function rouletteGame(){
+  if(balance<100){ showMsg("❌ Недостаточно средств"); return;}
+  balance-=100; updateUI();
+  showMsg('<div class="rouletteWheel" id="wheel"><div class="wheelPointer"></div></div>');
+
+  const wheel = document.getElementById('wheel');
+  let deg = Math.floor(Math.random()*360)+720; // 2+ оборота
+  wheel.style.transform = "rotate("+deg+"deg)";
+  setTimeout(()=>{
+    let sector = Math.floor(((360-(deg%360))/10));
+    showMsg('🎯 Результат рулетки: <b>'+sector+'</b>');
+    if(sector%2===0){ balance+=200; gainExp(30); showMsg('🎯 WIN! Выпало <b>'+sector+'</b>'); }
+    else showMsg('🎯 LOSE! Выпало <b>'+sector+'</b>');
+    updateUI();
+  },5000);
+}
+
+// ===== Dice, Coin, Card =====
 function dice(){ showMsg("<span class='diceFace'>🎲</span> Бросок кубика"); balance-=20; gainExp(15); updateUI(); }
 function coinFlip(){ showMsg("<span class='coin'>🪙</span> Монета летит..."); balance-=10; gainExp(10); updateUI(); }
 function drawCard(){ showMsg("<span class='card'>🂡</span> Карта вытащена..."); balance-=30; gainExp(20); updateUI(); }
@@ -83,7 +98,7 @@ function drawCard(){ showMsg("<span class='card'>🂡</span> Карта выта
 function dailyBonus(){ balance+=200; gainExp(20); showMsg("🎁 Ежедневный бонус +200"); updateUI(); }
 function specialBonus(){ balance+=500; gainExp(50); showMsg("✨ Специальный бонус +500"); updateUI(); }
 
-// ===== Firebase Online Leaderboard =====
+// ===== Firebase Leaderboard =====
 const firebaseConfig = {
   apiKey: "AIzaSyCL_3zOuCZuVywmenJUevWr68ypGm1hSmA",
   authDomain: "ludo-72257.firebaseapp.com",
@@ -92,21 +107,8 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-function saveOnlineScore(){ 
-  const name = prompt("Введите имя"); 
-  if(!name) return; 
-  db.ref("leaderboard/"+name).set({balance:balance,level:level});
-  showOnlineLeaderboard();
-}
-function showOnlineLeaderboard(){ 
-  db.ref("leaderboard").orderByChild("balance").limitToLast(10).once("value",snap=>{
-    const data = snap.val(); if(!data) return;
-    const arr=Object.entries(data).sort((a,b)=>b[1].balance-a[1].balance);
-    let html="<h3>🌐 ONLINE LEADERBOARD</h3><ol>";
-    arr.forEach(([name,val])=>{ html+=`<li>${name}: ${val.balance} 💰 (Lvl ${val.level})</li>`; });
-    html+="</ol>"; document.getElementById("result").innerHTML = html;
-  });
-}
+function saveOnlineScore(){ const name = prompt("Введите имя"); if(!name) return; db.ref("leaderboard/"+name).set({balance:balance,level:level}); showOnlineLeaderboard();}
+function showOnlineLeaderboard(){ db.ref("leaderboard").orderByChild("balance").limitToLast(10).once("value",snap=>{ const data = snap.val(); if(!data) return; let arr=Object.entries(data).sort((a,b)=>b[1].balance-a[1].balance); let html="<h3>🌐 ONLINE LEADERBOARD</h3><ol>"; arr.forEach(([name,val])=>{ html+=`<li>${name}: ${val.balance} 💰 (Lvl ${val.level})</li>`; }); html+="</ol>"; document.getElementById("result").innerHTML = html; });}
 
 // ===== Admin Panel =====
 function adminPanel(){
