@@ -40,8 +40,8 @@
 </div>
 
 <button id="adminBtn" onclick="adminPanel()">Admin</button>
-
-<script>
+</body>
+  <script>
 let balance = parseInt(localStorage.getItem("balance")) || 1000;
 let level = parseInt(localStorage.getItem("level")) || 1;
 let exp = parseInt(localStorage.getItem("exp")) || 0;
@@ -122,5 +122,4 @@ function adminPanel(){
 
 updateUI();
 </script>
-</body>
 </html>
