@@ -2,49 +2,26 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Demo Casino</title>
+<title>Demo Casino Online</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
 
 <style>
 body {
   margin:0;
   font-family: 'Segoe UI', sans-serif;
-  background: radial-gradient(circle at top, #222, #000);
+  background: #111;
   color:#fff;
   text-align:center;
 }
-header {
-  padding:20px;
-  background:#111;
-  font-size:26px;
-  font-weight:bold;
-}
-.balance, .level {
-  margin:10px;
-  font-size:20px;
-}
+header { padding:20px; font-size:28px; font-weight:bold; }
+.balance, .level { margin:10px; font-size:20px; }
 .games button {
-  width:90%;
-  max-width:300px;
-  padding:15px;
-  margin:10px;
-  font-size:18px;
-  border:none;
-  border-radius:12px;
+  width:90%; max-width:300px; padding:12px; margin:8px;
+  font-size:18px; border:none; border-radius:10px;
   background:linear-gradient(135deg,#ff9800,#ff5722);
-  color:#000;
-  font-weight:bold;
+  color:#000; font-weight:bold; cursor:pointer;
 }
-#result {
-  margin:20px;
-  min-height:24px;
-}
-.admin {
-  font-size:12px;
-  opacity:0.6;
-  cursor:pointer;
-}
+#result { margin:20px; min-height:30px; }
 </style>
 
 <!-- Firebase -->
@@ -54,185 +31,108 @@ header {
 </head>
 <body>
 
-<header>🎰 DEMO CASINO</header>
+<header>🌐 DEMO CASINO ONLINE</header>
 
-<div class="balance">Баланс: <span id="balance">1000</span> 💰</div>
+<div class="balance">Баланс: <span id="balance">1000</span></div>
 <div class="level">Level: <span id="level">1</span></div>
 
 <div class="games">
   <button onclick="slot()">🎰 SLOT</button>
-  <button onclick="dice()">🎲 DICE</button>
   <button onclick="roulette()">🎯 ROULETTE</button>
   <button onclick="dailyBonus()">🎁 DAILY BONUS</button>
-  <button onclick="withdraw()">💸 ВЫВОД (DEMO)</button>
-  <button onclick="saveScore()">📊 LEADERBOARD</button>
-  <button onclick="changeTheme()">🎨 CHANGE THEME</button>
+  <button onclick="saveOnlineScore()">🌐 SAVE ONLINE SCORE</button>
+  <button onclick="showOnlineLeaderboard()">🌐 SHOW ONLINE LEADERBOARD</button>
 </div>
 
 <div id="result"></div>
-<div class="admin" onclick="admin()">admin</div>
 
 <script>
-/* ======== Local storage variables ======== */
-let balance = parseInt(localStorage.getItem("balance")) || 1000;
-let level = parseInt(localStorage.getItem("level")) || 1;
-let exp = parseInt(localStorage.getItem("exp")) || 0;
 
-/* ======== Firebase setup ======== */
+// ====== Firebase config (вставь свои данные) ======
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-  projectId: "YOUR_PROJECT",
+  apiKey: "AIzaSyCL_3zOuCZuVywmenJUevWr68ypGm1hSmA",
+  authDomain: "ludo-72257.firebaseapp.com",
+  databaseURL: "https://ludo-72257-default-rtdb.firebaseio.com",
+  projectId: "ludo-72257",
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* ======== Helper functions ======== */
-function save(){
+// ====== Local Storage ======
+let balance = parseInt(localStorage.getItem("balance")) || 1000;
+let level = parseInt(localStorage.getItem("level")) || 1;
+let exp = parseInt(localStorage.getItem("exp")) || 0;
+
+function saveLocal(){
   localStorage.setItem("balance", balance);
   localStorage.setItem("level", level);
   localStorage.setItem("exp", exp);
 }
-function update(){
+function updateUI(){
   document.getElementById("balance").innerText = balance;
   document.getElementById("level").innerText = level;
-  save();
+  saveLocal();
 }
-function msg(text){ document.getElementById("result").innerText = text; }
-function gainExp(amount){
-  exp += amount;
-  if(exp >= level*100){
-    exp = 0;
-    level++;
-    msg("💎 Новый уровень! Level "+level);
-  }
-  save();
+function showMsg(txt){
+  document.getElementById("result").innerText = txt;
 }
 
-/* ======== Games ======== */
+// ====== Simple games ======
 function slot(){
-  if(balance<50) return msg("❌ Недостаточно средств");
-  balance -= 50;
-  update();
-
-  const symbols = ["🍒","🍋","🔔","⭐","7️⃣"];
-  let reel=["","",""], count=0;
-
-  const interval = setInterval(()=>{
-    reel = [
-      symbols[Math.floor(Math.random()*symbols.length)],
-      symbols[Math.floor(Math.random()*symbols.length)],
-      symbols[Math.floor(Math.random()*symbols.length)]
-    ];
-    msg("🎰 "+reel.join(" | "));
-    count++;
-    if(count>=10){
-      clearInterval(interval);
-      if(reel[0]===reel[1] && reel[1]===reel[2]){
-        balance += 200;
-        gainExp(50);
-        msg("🎉 BIG WIN! +200");
-      } else if(reel[0]===reel[1] || reel[1]===reel[2]){
-        balance += 100;
-        gainExp(20);
-        msg("🎊 SMALL WIN! +100");
-      } else {
-        msg("😢 Проигрыш -50");
-      }
-      update();
-    }
-  }, 200);
-}
-
-function dice(){
-  if(balance<20) return msg("❌ Недостаточно средств");
-  balance -= 20;
-  let roll = Math.floor(Math.random()*6)+1;
-  if(roll>=5){
-    balance += 60;
-    gainExp(15);
-    msg("🎲 Выпало "+roll+" — WIN!");
-  } else {
-    msg("🎲 Выпало "+roll+" — LOSE");
-  }
-  update();
+  if(balance<50) return showMsg("❌ Недостаточно средств");
+  balance -= 50; updateUI();
+  let win = Math.random()<0.3;
+  if(win){ balance+=150; level++; showMsg("🎉 WIN +150"); }
+  else showMsg("😢 LOSE -50");
+  updateUI();
 }
 
 function roulette(){
-  if(balance<100) return msg("❌ Недостаточно средств");
-  balance -= 100;
+  if(balance<100) return showMsg("❌ Недостаточно средств");
+  balance-=100;
   let win = Math.random()<0.48;
-  if(win){
-    balance += 200;
-    gainExp(30);
-    msg("🎯 ROULETTE WIN!");
-  } else {
-    msg("🎯 ROULETTE LOSE");
-  }
-  update();
+  if(win){ balance+=200; level++; showMsg("🎯 WIN +200"); }
+  else showMsg("🎯 LOSE");
+  updateUI();
 }
 
-/* ======== Daily bonus ======== */
 function dailyBonus(){
   const last = localStorage.getItem("lastBonus");
   const today = new Date().toDateString();
-  if(last===today) return msg("⏳ Бонус уже получен сегодня");
+  if(last === today) return showMsg("⏳ Уже получен сегодня");
   balance += 200;
   localStorage.setItem("lastBonus", today);
-  gainExp(20);
-  msg("🎁 Ежедневный бонус +200");
-  update();
+  showMsg("🎁 Ежедневный бонус +200");
+  updateUI();
 }
 
-/* ======== Withdraw (demo) ======== */
-function withdraw(){
-  if(balance<500) return msg("❌ Минимум 500");
-  balance -= 500;
-  msg("💸 Заявка на вывод принята (DEMO)");
-  update();
-}
-
-/* ======== Leaderboard ======== */
-function saveScore(){
-  const leaderboard = JSON.parse(localStorage.getItem("leaderboard") || "[]");
-  const name = prompt("Имя для таблицы лидеров");
+// ====== Online leaderboard ======
+function saveOnlineScore(){
+  const name = prompt("Введите имя для онлайн таблицы");
   if(!name) return;
-  leaderboard.push({name: name, balance: balance});
-  leaderboard.sort((a,b)=>b.balance-a.balance);
-  localStorage.setItem("leaderboard", JSON.stringify(leaderboard.slice(0,10)));
-  showLeaderboard();
-}
-function showLeaderboard(){
-  const lb = JSON.parse(localStorage.getItem("leaderboard") || "[]");
-  let html="<h3>🏆 Leaderboard</h3><ol>";
-  lb.forEach(p=>html+=`<li>${p.name}: ${p.balance} 💰</li>`);
-  html+="</ol>";
-  document.getElementById("result").innerHTML = html;
+  db.ref("leaderboard/"+name).set({
+    balance: balance,
+    level: level
+  });
+  showOnlineLeaderboard();
 }
 
-/* ======== Theme / Skin ======== */
-function changeTheme(){
-  const themes=[
-    {bg:"#111",btn:"linear-gradient(135deg,#ff9800,#ff5722)"},
-    {bg:"#001f3f",btn:"linear-gradient(135deg,#0074D9,#7FDBFF)"},
-    {bg:"#0A0","#0F0,#8F8)"} 
-  ];
-  const t=themes[Math.floor(Math.random()*themes.length)];
-  document.body.style.background=t.bg;
-  document.querySelectorAll("button").forEach(b=>b.style.background=t.btn);
+function showOnlineLeaderboard(){
+  db.ref("leaderboard").orderByChild("balance").limitToLast(10).once("value", snapshot => {
+    const data = snapshot.val();
+    if(!data) return showMsg("Нет данных онлайн");
+    const arr = Object.entries(data).sort((a,b)=>b[1].balance - a[1].balance);
+    let html = "<h3>🌐 ONLINE LEADERBOARD</h3><ol>";
+    arr.forEach(([name,val]) => {
+      html += `<li>${name}: ${val.balance} 💰 (Lvl: ${val.level})</li>`;
+    });
+    html += "</ol>";
+    document.getElementById("result").innerHTML = html;
+  });
 }
 
-/* ======== Admin ======== */
-function admin(){
-  let p=prompt("Пароль");
-  if(p==="admin"){
-    let add=parseInt(prompt("Добавить coins"));
-    if(!isNaN(add)){ balance+=add; update(); }
-  }
-}
+updateUI();
 
-update();
 </script>
 
 </body>
