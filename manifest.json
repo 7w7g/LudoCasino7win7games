@@ -1,0 +1,9 @@
+{
+  "name": "Demo Casino",
+  "short_name": "Casino",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff9800",
+  "icons": []
+}
