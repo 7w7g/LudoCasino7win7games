@@ -2,7 +2,7 @@
 body {
   margin:0;
   font-family:'Segoe UI',sans-serif;
-  background: url('https://images.unsplash.com/photo-1611691544375-04c993bfe75e') no-repeat center center fixed;
+  background: url('https://images.unsplash.com/photo-1602526219353-3b90aa636b39?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
   background-size: cover;
   color:#fff;
   overflow-x:hidden;
@@ -13,55 +13,57 @@ header {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:10px 20px;
+  padding:15px 30px;
   background: rgba(0,0,0,0.7);
+  box-shadow: 0 0 10px #000;
 }
-header .logo { font-size:26px; font-weight:bold; }
+header .logo { font-size:28px; font-weight:bold; text-shadow: 2px 2px 5px #000;}
 header .bonuses button {
-  margin-left:10px;
-  padding:8px 12px;
+  margin-left:12px;
+  padding:10px 16px;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
   background:linear-gradient(135deg,#ff9800,#ff5722);
   color:#000;
   font-weight:bold;
   cursor:pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-header .bonuses button:hover { transform: scale(1.1); }
+header .bonuses button:hover { transform: scale(1.1); box-shadow:0 0 10px #ffd700; }
 
 /* ===== Контейнер ===== */
-.container { display:flex; height:calc(100vh - 60px); }
+.container { display:flex; height:calc(100vh - 70px); }
 
 /* ===== Sidebar ===== */
 .sidebar {
-  width:220px;
-  background: rgba(0,0,0,0.7);
-  padding:10px;
+  width:240px;
+  background: rgba(0,0,0,0.75);
+  padding:15px;
   overflow-y:auto;
+  box-shadow: inset -2px 0 10px rgba(0,0,0,0.5);
 }
-.sidebar h3 { text-align:center; margin-bottom:10px; }
+.sidebar h3 { text-align:center; margin-bottom:15px; font-size:20px; text-shadow:1px 1px 2px #000;}
 .sidebar button {
   width:100%;
-  padding:12px;
-  margin:5px 0;
+  padding:14px;
+  margin:6px 0;
   font-size:16px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   cursor:pointer;
   background:linear-gradient(135deg,#0074D9,#7FDBFF);
   color:#fff;
-  transition: all 0.3s;
+  transition: all 0.3s, box-shadow 0.3s;
 }
 .sidebar button:hover {
   transform: scale(1.05);
-  box-shadow:0 0 10px #fff;
+  box-shadow:0 0 15px #00f;
 }
 
 /* ===== Main ===== */
 .main {
   flex:1;
-  padding:20px;
+  padding:25px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -72,83 +74,61 @@ header .bonuses button:hover { transform: scale(1.1); }
   display:flex;
   justify-content:space-between;
   width:100%;
-  margin-bottom:10px;
-  font-size:18px;
+  margin-bottom:15px;
+  font-size:20px;
+  font-weight:bold;
+  text-shadow:1px 1px 3px #000;
 }
 #gameArea {
   width:100%;
-  max-width:600px;
-  min-height:400px;
-  background:rgba(0,0,0,0.5);
-  border-radius:12px;
-  padding:20px;
+  max-width:650px;
+  min-height:450px;
+  background:rgba(0,0,0,0.6);
+  border-radius:15px;
+  padding:25px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  box-shadow:0 0 20px #000 inset;
 }
 #result {
-  margin-top:10px;
+  margin-top:15px;
   min-height:60px;
   font-size:18px;
   text-align:center;
-  padding:10px;
-  background:rgba(255,255,255,0.1);
-  border-radius:8px;
+  padding:12px;
+  background:rgba(255,255,255,0.05);
+  border-radius:10px;
+  box-shadow:0 0 10px #000 inset;
 }
 
 /* ===== Slots Animation ===== */
-@keyframes slotSpin {
-  0% { transform: rotateX(0deg);}
-  100% { transform: rotateX(360deg);}
-}
-.slotSymbol {
-  font-size:48px;
-  margin:0 10px;
-  display:inline-block;
-  animation: slotSpin 0.3s linear infinite;
-}
-.slotWin {
-  animation: glow 1s ease-in-out infinite alternate;
-}
-@keyframes glow {
-  0% { text-shadow: 0 0 5px #fff;}
-  100% { text-shadow: 0 0 20px #ffd700;}
-}
+@keyframes slotSpin { 0%{transform:rotateX(0deg);}100%{transform:rotateX(360deg);} }
+.slotSymbol { font-size:50px; margin:0 12px; display:inline-block; animation: slotSpin 0.3s linear infinite; }
+.slotWin { animation: glow 1s ease-in-out infinite alternate; }
+@keyframes glow { 0%{ text-shadow:0 0 5px #fff;} 100%{ text-shadow:0 0 25px #ffd700;} }
 
 /* ===== Dice Animation ===== */
-@keyframes diceRoll {
-  0% { transform: translateY(0px) rotate(0deg);}
-  25% { transform: translateY(-20px) rotate(90deg);}
-  50% { transform: translateY(0px) rotate(180deg);}
-  75% { transform: translateY(-10px) rotate(270deg);}
-  100% { transform: translateY(0px) rotate(360deg);}
-}
-.diceFace { display:inline-block; font-size:48px; animation: diceRoll 0.5s ease-in-out; }
+@keyframes diceRoll {0%{transform:translateY(0) rotate(0deg);}25%{transform:translateY(-20px) rotate(90deg);}50%{transform:translateY(0) rotate(180deg);}75%{transform:translateY(-10px) rotate(270deg);}100%{transform:translateY(0) rotate(360deg);}}
+.diceFace { display:inline-block; font-size:48px; animation:diceRoll 0.5s ease-in-out; }
 
 /* ===== Coin Flip Animation ===== */
-@keyframes coinFlip {
-  0% { transform: rotateY(0deg);}
-  100% { transform: rotateY(720deg);}
-}
-.coin { display:inline-block; font-size:48px; animation: coinFlip 0.8s ease-in-out; }
+@keyframes coinFlip {0%{transform:rotateY(0deg);}100%{transform:rotateY(720deg);}}
+.coin { display:inline-block; font-size:48px; animation:coinFlip 0.8s ease-in-out; }
 
 /* ===== Card Animation ===== */
-@keyframes cardMove {
-  0% { transform: translateY(-100px) rotate(-20deg); opacity:0;}
-  50% { transform: translateY(50px) rotate(10deg); opacity:1;}
-  100% { transform: translateY(0px) rotate(0deg); opacity:1;}
-}
-.card { display:inline-block; font-size:48px; animation: cardMove 0.5s ease-in-out; }
+@keyframes cardMove {0%{transform:translateY(-100px) rotate(-20deg); opacity:0;}50%{transform:translateY(50px) rotate(10deg); opacity:1;}100%{transform:translateY(0px) rotate(0); opacity:1;}}
+.card { display:inline-block; font-size:48px; animation:cardMove 0.5s ease-in-out; }
 
-/* ===== Roulette Animation ===== */
+/* ===== Roulette ===== */
 .rouletteWheel {
-  width:250px;
-  height:250px;
+  width:270px;
+  height:270px;
   border-radius:50%;
-  border:5px solid #fff;
+  border:6px solid #fff;
   position:relative;
-  margin:20px;
+  margin:25px;
   background: conic-gradient(
     red 0 10deg, black 10deg 20deg, red 20deg 30deg, black 30deg 40deg,
     red 40deg 50deg, black 50deg 60deg, red 60deg 70deg, black 70deg 80deg,
@@ -161,12 +141,14 @@ header .bonuses button:hover { transform: scale(1.1); }
     red 320deg 330deg, black 330deg 340deg, red 340deg 350deg, black 350deg 360deg
   );
   transition: transform 5s cubic-bezier(0.33,1,0.68,1);
+  box-shadow:0 0 20px #000;
 }
-.wheelPointer {
-  width:0; height:0;
-  border-left:15px solid transparent;
-  border-right:15px solid transparent;
-  border-bottom:30px solid yellow;
-  position:absolute;
-  top:-30px; left:calc(50% - 15px);
-}
+.wheelPointer { width:0; height:0; border-left:15px solid transparent; border-right:15px solid transparent; border-bottom:30px solid yellow; position:absolute; top:-30px; left:calc(50% - 15px); }
+
+/* ===== Particles ===== */
+.particle { position:absolute; width:14px; height:14px; background: gold; border-radius:50%; pointer-events:none; animation: particleMove 1s forwards; }
+@keyframes particleMove {0%{opacity:1; transform:translate(0,0) scale(1);}100%{opacity:0; transform:translate(var(--x),var(--y)) scale(0);}}
+
+/* ===== Admin Button ===== */
+#adminBtn { position:fixed; bottom:12px; right:12px; padding:12px 16px; background:red; color:#fff; border:none; border-radius:8px; cursor:pointer; transition: all 0.3s; box-shadow:0 0 8px #000;}
+#adminBtn:hover { transform: scale(1.1); box-shadow:0 0 15px #ffd700; }
