@@ -15,7 +15,6 @@ header {
   background: rgba(0,0,0,0.7);
   box-shadow: 0 0 10px #000;
 }
-<div class="banner">🎉 Ежедневные бонусы и розыгрыши! Успей играть! 🎉</div>
 header .logo { font-size:28px; font-weight:bold; text-shadow: 2px 2px 5px #000;}
 header .bonuses button {
   margin-left:12px;
