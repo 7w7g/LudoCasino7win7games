@@ -31,6 +31,12 @@ header .bonuses button:hover { transform: scale(1.1); box-shadow:0 0 10px #ffd70
 
 .container { display:flex; height:calc(100vh - 70px); }
 
+.sidebar button:hover, .bonuses button:hover {
+  transform: scale(1.1);
+  box-shadow:0 0 15px #ffd700;
+  cursor:pointer;
+}
+
 .sidebar {
   width:240px;
   background: rgba(0,0,0,0.75);
