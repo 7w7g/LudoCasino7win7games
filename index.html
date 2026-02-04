@@ -17,6 +17,7 @@
     <button onclick="dailyBonus()">🎁 Daily Bonus</button>
     <button onclick="specialBonus()">✨ Special Bonus</button>
   </div>
+  <div class="banner">🎉 Ежедневные бонусы и розыгрыши! Успей играть! 🎉</div>
 </header>
 
 <div class="container">
@@ -50,6 +51,12 @@ function updateUI(){ document.getElementById("balance").innerText = balance; doc
 function showMsg(msg){ document.getElementById("result").innerHTML = msg;}
 function gainExp(amount){ exp += amount; if(exp >= level*100){ exp=0; level++; showMsg("💎 Новый уровень!");} updateUI();}
 
+document.querySelectorAll('.sidebar button').forEach(btn=>{
+  btn.addEventListener('mouseenter',()=>{ showMsg("💡 Нажмите чтобы играть в "+btn.textContent); });
+  btn.addEventListener('mouseleave',()=>{ showMsg("Выберите игру слева"); });
+});
+
+    
 // ===== Particles =====
 function createParticles(x,y,count=25){for(let i=0;i<count;i++){const p=document.createElement('div');p.className='particle';const dx=Math.random()*200-100;const dy=Math.random()*200-150;p.style.setProperty('--x',dx+'px');p.style.setProperty('--y',dy+'px');p.style.left=x+'px';p.style.top=y+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),1000);}}
 
@@ -80,18 +87,41 @@ function slot(){
 function rouletteGame(){
   if(balance<100){ showMsg("❌ Недостаточно средств"); return;}
   balance-=100; updateUI();
+  const rect = document.getElementById('gameArea').getBoundingClientRect();
+
   showMsg('<div class="rouletteWheel" id="wheel"><div class="wheelPointer"></div></div>');
   const wheel = document.getElementById('wheel');
-  let deg = Math.floor(Math.random()*360)+720;
-  wheel.style.transform = "rotate("+deg+"deg)";
+
+  // Звуки
+  sounds.rouletteSpin.play();
+
+  // Вращение
+  let deg = Math.floor(Math.random()*360)+1440; // 4+ оборота
+  wheel.style.transition = "transform 5s cubic-bezier(0.33,1,0.68,1)";
+  setTimeout(()=>{ wheel.style.transform = `rotate(${deg}deg)`; },100);
+
+  // После остановки
   setTimeout(()=>{
-    const sector = Math.floor(((360-(deg%360))/10));
-    const rect = document.getElementById('gameArea').getBoundingClientRect();
-    if(sector%2===0){ balance+=200; gainExp(30); showMsg('🎯 WIN! Выпало <b>'+sector+'</b>'); createParticles(rect.left+rect.width/2,rect.top+rect.height/2,30);}
-    else showMsg('🎯 LOSE! Выпало <b>'+sector+'</b>');
+    const sector = Math.floor(((360-(deg%360))/10)) % 36;
+    let win=false;
+    if(sector%2===0){ balance+=200; gainExp(30); win=true; }
+
+    // Подсветка сектора
+    const highlight = document.createElement('div');
+    highlight.className='rouletteSector rouletteHighlight';
+    wheel.appendChild(highlight);
+
+    // Частицы и звук выигрыша
+    if(win){
+      createParticles(rect.left+rect.width/2,rect.top+rect.height/2,50);
+      sounds.rouletteWin.play();
+    }
+
+    showMsg(`🎯 Результат рулетки: <b>${sector}</b> ${win ? '🎉 WIN!' : '😢 LOSE'}`);
     updateUI();
-  },5000);
+  },5100);
 }
+
 
 // ===== Dice, Coin, Card =====
 function dice(){ showMsg("<span class='diceFace'>🎲</span> Бросок кубика"); balance-=20; gainExp(15); updateUI(); }
